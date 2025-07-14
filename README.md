@@ -79,9 +79,13 @@ model=openai/gpt-4o to
 model=diotima/gpt-4o-mini
 ```
 
-### ------------------------------------------------------------------------------------------
+## Summarize benchmark results
+helm-summarize --suite my-suite
 
+## Start a web server to display benchmark results
+helm-server --suite my-suite
 
+### ----------------------------- OLD STUFFS -------------------------------------
 
 # Holistic Evaluation of Language Models (HELM)
 
