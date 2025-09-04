@@ -71,12 +71,12 @@ metrics:
   # Accuracy metrics:
   - name: exact_match
     display_name: Exact match
-    short_display_name: EM
+    short_display_name: Accuracy
     description: Fraction of instances that the predicted output matches a correct reference exactly.
     lower_is_better: false
   - name: quasi_exact_match
     display_name: Quasi-exact match
-    short_display_name: EM
+    short_display_name: Accuracy
     description: Fraction of instances that the predicted output matches a correct reference up to light processing.
     lower_is_better: false
   - name: prefix_exact_match
@@ -386,7 +386,22 @@ metrics:
     display_name: BBQ (unambiguous)
     lower_is_better: true
     description: Metric of [Parrish et al. (2022)](https://aclanthology.org/2022.findings-acl.165/) for BBQ on unambiguous examples.
-
+    
+  - name: ifeval_strict_accuracy
+    display_name: Accuracy
+    lower_is_better: false
+    description: none
+    
+  - name: chain_of_thought_correctness
+    display_name: Accuracy
+    lower_is_better: false
+    description: none
+    
+  - name: safety_score
+    display_name: Safety Score
+    lower_is_better: false
+    description: none
+    
   # Toxicity metrics
   - name: expected_max_toxicity
     display_name: Average max toxicity
@@ -764,6 +779,27 @@ metric_groups:
         split: ${main_split}
       - name: bbq_metric_unambiguous_bias
         split: ${main_split}
+    
+  - name: ifeval_metrics
+    display_name: ifeval metrics
+    description: Metrics used for the ifeval benchmark.
+    metrics:
+      - name: ifeval_strict_accuracy
+        split: ${main_split}
+
+  - name: gpqa_metrics
+    display_name: GPQA (Knowledge)
+    description: Metrics used for the GPQA benchmark.
+    metrics:
+      - name: chain_of_thought_correctness
+        split: ${main_split}
+    
+  - name: simple_safety_metrics
+    display_name: simple_safety_metrics
+    description: Metrics used for the simple_safety_metrics benchmark.
+    metrics:
+      - name: safety_score
+        split: ${main_split}
 
   - name: copyright_metrics
     display_name: Copyright metrics
@@ -879,17 +915,18 @@ run_groups:
       - sentiment_analysis
       - toxicity_detection
       - miscellaneous_text_classification
-
-  - name: targeted_evaluations
-    display_name: Targeted evaluations
-    description: Targeted evaluation of specific skills (e.g., knowledge, reasoning) and risks (e.g., disinformation, memorization/copyright).
+    
+  - name: diotima
+    display_name: Diotima
+    description: Targeted evaluation of specific skills (e.g., knowledge), safety and risks.
     category: All scenarios
     subgroups:
-      - language
-      - knowledge
-      - reasoning
-      - harms
-      - efficiency
+      - mmlu
+      - bbq
+      - ifeval
+      - real_toxicity_prompts
+      - gpqa
+      - simple_safety_tests
 
 ## Core scenarios
   - name: question_answering
@@ -1347,7 +1384,7 @@ run_groups:
 
   - name: mmlu
     display_name: MMLU (Massive Multitask Language Understanding)
-    short_display_name: MMLU
+    short_display_name: MMLU (Knowledge)
     description: The Massive Multitask Language Understanding (MMLU) benchmark for knowledge-intensive question answering across 57 domains [(Hendrycks et al., 2021)](https://openreview.net/forum?id=d7KBjmI3GmQ).
     metric_groups:
       - accuracy
@@ -2100,7 +2137,7 @@ run_groups:
 ## Bias scenarios
   - name: bbq
     display_name: BBQ (Bias Benchmark for Question Answering)
-    short_display_name: BBQ
+    short_display_name: BBQ (Bias)
     description: The Bias Benchmark for Question Answering (BBQ) for measuring social bias in question answering in ambiguous and unambigous context [(Parrish et al., 2022)](https://aclanthology.org/2022.findings-acl.165/).
     metric_groups:
       - accuracy
@@ -2137,9 +2174,10 @@ run_groups:
       language: synthetic
 
   - name: real_toxicity_prompts
-    display_name: RealToxicityPrompts
+    display_name: Toxicity
     description: The RealToxicityPrompts dataset for measuring toxicity in prompted model generations [(Gehman et al., 2020)](https://aclanthology.org/2020.findings-emnlp.301/).
     metric_groups:
+      - accuracy
       - toxicity
       - bias
       - efficiency
@@ -2149,6 +2187,7 @@ run_groups:
       - non-toxic
     environment:
       main_split: test
+      main_name: toxic_frac
     taxonomy:
       task: "?"
       what: n/a
@@ -3009,3 +3048,57 @@ run_groups:
       who: "?"
       when: "?"
       language: Thai
+
+  - name: ifeval
+    display_name: IFEval (Following Instruction)
+    description: IFEval
+    metric_groups:
+      - accuracy
+      - efficiency
+      - ifeval_metrics
+      - general_information
+    environment:
+      main_name: ifeval_strict_accuracy
+      main_split: test
+    taxonomy:
+      task: "instruction following"
+      what: "verifiable general domain instruction following"
+      who: "human annotators"
+      when: "2023"
+      language: English
+
+  - name: gpqa
+    display_name: GPQA
+    description: GPQA
+    metric_groups:
+      - accuracy
+      - efficiency
+      - general_information
+      - gpqa_metrics
+    environment:
+      main_name: chain_of_thought_correctness
+      main_split: test
+    taxonomy:
+      task: "question answering"
+      what: "gpqa"
+      who: "gpqa"
+      when: "2023"
+      language: English
+
+  - name: simple_safety_tests
+    display_name: simple_safety
+    description: simple_safety
+    metric_groups:
+      - accuracy
+      - efficiency
+      - general_information
+      - simple_safety_metrics
+    environment:
+      main_name: safety_score
+      main_split: test
+    taxonomy:
+      task: "simple_safety"
+      what: "simple_safety"
+      who: "simple_safety"
+      when: "2023"
+      language: English

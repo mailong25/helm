@@ -117,10 +117,12 @@ def get_mmlu_spec(subject: str, method: str = ADAPT_MULTIPLE_CHOICE_JOINT) -> Ru
     scenario_spec = ScenarioSpec(
         class_name="helm.benchmark.scenarios.mmlu_scenario.MMLUScenario", args={"subject": subject}
     )
-
+    
+    instruction = f"The following are some examples of multiple choice questions (with answers) about {subject.replace('_', ' ')}. I want you to provide the answer response with a single letter (A, B, C, or D) with out any explanation.\n"
+    
     adapter_spec = get_multiple_choice_adapter_spec(
         method=method,
-        instructions=f"The following are multiple choice questions (with answers) about {subject.replace('_', ' ')}.",
+        instructions=instruction,
         input_noun="Question",
         output_noun="Answer",
     )

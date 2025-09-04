@@ -21,6 +21,7 @@ def extract_answer(output_text: str) -> Optional[str]:
         Optional[str]: The extracted answer (A-J) if found, otherwise None.
     """
     # First regex: Matches "answer is (A-J)" with optional parentheses
+    
     match = re.search(r"answer is \(?([A-J])\)?", output_text)
     if match:
         return match.group(1)
@@ -39,8 +40,14 @@ def extract_answer(output_text: str) -> Optional[str]:
     match = re.search(r"correct answer is [^A-Z]*([A-J])", output_text)
     if match:
         return match.group(1)
+    
+    # Fifth regex: Matches "answer is" followed by LaTeX boxed answers like $\boxed{A}$, $\boxed{\text{B}}$, $\boxed{\text{(C)}}$
+    match = re.search(r"answer is \$\\boxed\{(?:\\text\{)?\(?([A-J])\)?(?:\})?\}\$", output_text)
+    if match:
+        return match.group(1)
 
     # If no regex matches, return None
+    print('========', output_text)
     return None
 
 

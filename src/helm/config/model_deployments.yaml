@@ -4335,6 +4335,13 @@ model_deployments:
     max_sequence_length: 16000
     client_spec:
       class_name: "helm.clients.diotima_client.DiotimaOpenAIClient"
+
+  - name: diotima/gpt-4.1-mini
+    model_name: diotima/gpt-4.1-mini
+    tokenizer_name: openai/cl100k_base
+    max_sequence_length: 16000
+    client_spec:
+      class_name: "helm.clients.diotima_client.DiotimaOpenAIClient"
     
   - name: diotima/gpt-4o
     model_name: diotima/gpt-4o
@@ -4342,4 +4349,80 @@ model_deployments:
     max_sequence_length: 16000
     client_spec:
       class_name: "helm.clients.diotima_client.DiotimaOpenAIClient"
+    
+  - name: diotima/gpt-4.1
+    model_name: diotima/gpt-4.1
+    tokenizer_name: openai/cl100k_base
+    max_sequence_length: 16000
+    client_spec:
+      class_name: "helm.clients.diotima_client.DiotimaOpenAIClient"
 
+  - name: diotima/o4-mini
+    model_name: diotima/o4-mini
+    tokenizer_name: openai/cl100k_base
+    max_sequence_length: 16000
+    client_spec:
+      class_name: "helm.clients.diotima_client.DiotimaOpenAIClient"
+
+  - name: diotima/gemini-2.5-pro
+    model_name: diotima/gemini-2.5-pro
+    tokenizer_name: openai/cl100k_base
+    max_sequence_length: 16000
+    client_spec:
+      class_name: "helm.clients.diotima_client.DiotimaGeminiClient"
+
+  - name: diotima/gemini-2.5-flash
+    model_name: diotima/gemini-2.5-flash
+    tokenizer_name: openai/cl100k_base
+    max_sequence_length: 16000
+    client_spec:
+      class_name: "helm.clients.diotima_client.DiotimaGeminiClient"
+    
+  - name: diotima/gemini-2.5-flash-thinking
+    model_name: diotima/gemini-2.5-flash-thinking
+    tokenizer_name: openai/cl100k_base
+    max_sequence_length: 16000
+    client_spec:
+      class_name: "helm.clients.diotima_client.DiotimaGeminiClient"
+
+  - name: diotima/gemini-2.5-pro-thinking
+    model_name: diotima/gemini-2.5-pro-thinking
+    tokenizer_name: openai/cl100k_base
+    max_sequence_length: 16000
+    client_spec:
+      class_name: "helm.clients.diotima_client.DiotimaGeminiClient"
+
+  - name: diotima/gemini-2.5-flash-lite-thinking
+    model_name: diotima/gemini-2.5-flash-lite-thinking
+    tokenizer_name: openai/cl100k_base
+    max_sequence_length: 16000
+    client_spec:
+      class_name: "helm.clients.diotima_client.DiotimaGeminiClient"
+      
+  - name: diotima/grok-4
+    model_name: diotima/grok-4
+    tokenizer_name: openai/cl100k_base
+    max_sequence_length: 16000
+    client_spec:
+      class_name: "helm.clients.diotima_client.DiotimaXAIClient"
+
+  - name: diotima/grok-3-mini
+    model_name: diotima/grok-3-mini
+    tokenizer_name: openai/cl100k_base
+    max_sequence_length: 16000
+    client_spec:
+      class_name: "helm.clients.diotima_client.DiotimaXAIClient"
+
+  - name: diotima/mistral-large-latest
+    model_name: diotima/mistral-large-latest
+    tokenizer_name: openai/cl100k_base
+    max_sequence_length: 16000
+    client_spec:
+      class_name: "helm.clients.diotima_client.DiotimaMistralClient"
+
+  - name: diotima/mistral-medium-latest
+    model_name: diotima/mistral-medium-latest
+    tokenizer_name: openai/cl100k_base
+    max_sequence_length: 16000
+    client_spec:
+      class_name: "helm.clients.diotima_client.DiotimaMistralClient"

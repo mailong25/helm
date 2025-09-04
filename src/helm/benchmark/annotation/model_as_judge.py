@@ -31,10 +31,11 @@ def score_with_reasoning_with_gpt_and_llama(
     Score using GPT-4o and Llama 3.1 for safety scenarios in HELM Safety."""
     # TODO: Make this configurable
     SHORT_NAME_TO_MODEL_INFO: Dict[str, AnnotatorModelInfo] = {
-        "gpt": AnnotatorModelInfo(model_name="openai/gpt-4o-2024-05-13", model_deployment="openai/gpt-4o-2024-05-13"),
-        "llama": AnnotatorModelInfo(
-            model_name="meta/llama-3.1-405b-instruct-turbo", model_deployment="together/llama-3.1-405b-instruct-turbo"
-        ),
+        "gpt": AnnotatorModelInfo(model_name="diotima/gpt-4o-mini", model_deployment="diotima/gpt-4o-mini"),
+        #"gemini": AnnotatorModelInfo(model_name="diotima/gemini-2.5-flash", model_deployment="diotima/gemini-2.5-flash"),
+        # "mistral": AnnotatorModelInfo(
+        #     model_name="diotima/mistral-medium-latest", model_deployment="diotima/mistral-medium-latest"
+        # ),
     }
     result: Dict[str, Optional[Union[str, float]]] = {"prompt_text": annotator_prompt}
     for short_name, model_info in SHORT_NAME_TO_MODEL_INFO.items():

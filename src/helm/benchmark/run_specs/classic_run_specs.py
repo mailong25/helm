@@ -56,7 +56,7 @@ def get_bbq_spec(subject: str, method: str = ADAPT_MULTIPLE_CHOICE_JOINT) -> Run
     )
     adapter_spec = get_multiple_choice_adapter_spec(
         method=method,
-        instructions="The following are multiple choice questions (with answers).",
+        instructions="The following are multiple choice questions (with answers). I want you to provide the final answer response with a single letter (A, B, C, or D) with out any explanation.\n",
         input_noun="Passage",
         output_noun="Answer",
     )

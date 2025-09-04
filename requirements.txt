@@ -370,3 +370,6 @@ zstandard==0.18.0
 tiktoken==0.9.0
 mistralai==1.9.2
 xai-sdk==1.0.0
+git+https://github.com/mailong25/langfun.git@custom-longform-changes#egg=langfun
+rank-bm25==0.2.2
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl#sha256=86cc141f63942d4b2c5fcee06630fd6f904788d2f0ab005cce45aadb8fb73889

@@ -6,12 +6,8 @@
 git clone https://github.com/mailong25/helm.git
 cd helm
 pip install -e .
-pip install crfm-helm[together]
-pip install crfm-helm[metrics]
-pip install google-api-python-client==2.173.0
-pip install tiktoken==0.9.0
-pip install openai==1.93.2
-pip install together==1.5.21
+pip install -r requirements_extra.txt
+
 ```
 
 ## 🔐 Export Your API Keys
@@ -35,40 +31,41 @@ huggingface-cli login
 Set evaluation instance limit:
 ```bash
 export MAX_EVAL_INSTANCES=5
+export EVAL_MODEL="openai/gpt-4o"
 ```
 
 ## 📚 Subject Knowledge Test
 ```bash 
-helm-run --run-entries gpqa:subset=gpqa_main,model=openai/gpt-4o --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
+helm-run --run-entries gpqa:subset=gpqa_main,model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
 
-helm-run --run-entries mmlu:subject=high_school_biology,model=openai/gpt-4o --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
-helm-run --run-entries mmlu:subject=college_biology,model=openai/gpt-4o --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
+helm-run --run-entries mmlu:subject=high_school_biology,model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
+helm-run --run-entries mmlu:subject=college_biology,model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
 
-helm-run --run-entries mmlu:subject=abstract_algebra,model=openai/gpt-4o --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
-helm-run --run-entries mmlu:subject=college_chemistry,model=openai/gpt-4o --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
-helm-run --run-entries mmlu:subject=computer_security,model=openai/gpt-4o --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
-helm-run --run-entries mmlu:subject=econometrics,model=openai/gpt-4o --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
-helm-run --run-entries mmlu:subject=us_foreign_policy,model=openai/gpt-4o --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
+helm-run --run-entries mmlu:subject=abstract_algebra,model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
+helm-run --run-entries mmlu:subject=college_chemistry,model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
+helm-run --run-entries mmlu:subject=computer_security,model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
+helm-run --run-entries mmlu:subject=econometrics,model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
+helm-run --run-entries mmlu:subject=us_foreign_policy,model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
 ```
 
 ## Toxicity Test
 ```bash
-helm-run --run-entries real_toxicity_prompts:model=openai/gpt-4o --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
+helm-run --run-entries real_toxicity_prompts:model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES -n 1
 ```
 
 ## 🛡️ Safety Test
 ```bash
-helm-run --run-entries simple_safety_tests:model=openai/gpt-4o --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
+helm-run --run-entries simple_safety_tests:model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
 ```
 
 ## 📝 Instruction Following Test
 ```bash
-helm-run --run-entries ifeval:model=openai/gpt-4o --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
+helm-run --run-entries ifeval:model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
 ```
 
 ## ⚖️ Bias/Fairness Test
 ```bash
-helm-run --run-entries bbq:subject=all,model=openai/gpt-4o --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
+helm-run --run-entries bbq:subject=all,model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
 ```
 
 ## 🧬 Using a Custom Model

@@ -120,7 +120,7 @@ def get_gpqa_spec(subset: str, use_chain_of_thought: str = "true", use_few_shot:
                 output_prefix="",
                 global_suffix=(
                     "Give step by step reasoning before you answer, and when you’re ready to answer, "
-                    'please use the format "The correct answer is (insert answer here)":'
+                    'please strictly use the format "The correct answer is (insert answer letter here)" without any further explanation.'
                 ),
             )
         else:
@@ -150,8 +150,8 @@ def get_gpqa_spec(subset: str, use_chain_of_thought: str = "true", use_few_shot:
                 reference_prefix="(A) ",
                 global_suffix=(
                     "Let’s think step by step. Based on your reasoning, what is the single, "
-                    "most likely answer choice? Format your response as follows: "
-                    '"The correct answer is (insert answer here)".'
+                    "most likely answer choice? Stricly format your response as follows: "
+                    '"The correct answer is (insert answer letter here)".'
                 ),
             )
         else:

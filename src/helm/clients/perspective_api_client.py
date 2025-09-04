@@ -20,6 +20,7 @@ try:
 except ModuleNotFoundError as e:
     handle_module_not_found_error(e, ["metrics"])
 
+import time
 
 class PerspectiveAPIClientCredentialsError(NonRetriableException):
     pass
@@ -138,6 +139,7 @@ class PerspectiveAPIClient(ToxicityClassifierClient):
                 error=f"Error was thrown when making a request to Perspective API: {e}",
             )
 
+        time.sleep(1)
         return PerspectiveAPIRequestResult(
             success=True,
             cached=cached,
