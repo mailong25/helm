@@ -6,7 +6,7 @@
 
 # Set evaluation instance limit and model
 export MAX_EVAL_INSTANCES=5
-export EVAL_MODEL="diotima/gpt-4o"
+export EVAL_MODEL="openai/gpt-4o"
 
 # ===============================
 # Subject Knowledge Test

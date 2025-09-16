@@ -7,31 +7,23 @@ git clone https://github.com/mailong25/helm.git
 cd helm
 pip install -e .
 pip install -r requirements_extra.txt
-
 ```
 
 ## 🔐 Export Your API Keys
 ```bash
 export OPENAI_API_KEY=""
-export TOGETHER_API_KEY=""
-```
-Then go to prod_env/credentials.conf and input your perspectiveApiKey.
-
-## 🤗 Authenticate Hugging Face
-```bash
+export PERSPECTIVE_API_KEY=""
 huggingface-cli login
 ```
 
 ## 🧠 Adding Custom Models
- - helm/config/model_deployments.yaml: Scroll to the end for an example of the custom Diotima model.
- - helm/config/model_metadata.yaml: Scroll to the end for an example of the custom Diotima model.
- - helm/clients/diotima_client.py: This is where the custom Diotima client is implemented.
+ - helm/clients/custom_client.py: This is where the custom client is implemented.
 
 ## 🧪 Run Benchmark
 Set evaluation instance limit:
 ```bash
 export MAX_EVAL_INSTANCES=5
-export EVAL_MODEL="openai/gpt-4o"
+export EVAL_MODEL="openai/gpt-4.1-mini"
 ```
 
 ## 📚 Subject Knowledge Test
@@ -66,14 +58,6 @@ helm-run --run-entries ifeval:model=$EVAL_MODEL --suite my-suite --max-eval-inst
 ## ⚖️ Bias/Fairness Test
 ```bash
 helm-run --run-entries bbq:subject=all,model=$EVAL_MODEL --suite my-suite --max-eval-instances $MAX_EVAL_INSTANCES
-```
-
-## 🧬 Using a Custom Model
-To run benchmarks using your custom model, change:
-
-```bash
-model=openai/gpt-4o to
-model=diotima/gpt-4o-mini
 ```
 
 ## Summarize benchmark results

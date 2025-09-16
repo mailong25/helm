@@ -21,7 +21,7 @@ class DiotimaClient(CachingClient):
 
     def make_request(self, request: Request) -> RequestResult:
         messages = [{"role": "user", "content": request.prompt}]
-        #print(request)
+        print(request)
         raw_request: Dict[str, Any] = {
             "model": self._get_model_for_request(request),
             "messages": messages,
@@ -30,8 +30,6 @@ class DiotimaClient(CachingClient):
             "n": request.num_completions,
             "stop": request.stop_sequences or None,
             "max_tokens": request.max_tokens,
-            "presence_penalty": request.presence_penalty,
-            "frequency_penalty": request.frequency_penalty,
         }
 
         def do_it() -> Dict[str, Any]:
@@ -71,6 +69,7 @@ class DiotimaOpenAIClient(DiotimaClient):
         self.OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     
     def invoke_model(self, raw_request: Dict[str, Any]) -> Dict[str, Any]:
+        print(raw_request)
         start_time = time.time()
         client = openai.OpenAI(api_key=self.OPENAI_API_KEY)
         if 'o4-mini' in raw_request["model"]:
