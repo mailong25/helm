@@ -12,7 +12,6 @@ from mistralai import Mistral
 import os
 from google import genai
 from google.genai import types
-from datetime import datetime
 
 class CustomClient(CachingClient):
     """Simple client for tutorials and for debugging."""
@@ -28,8 +27,7 @@ class CustomClient(CachingClient):
             "temperature": request.temperature if hasattr(request, 'temperature') else 0.0,
             "top_p": request.top_p,
             "n": request.num_completions,
-            "max_tokens": max(request.max_tokens, 16),
-            "datetime": datetime.now().strftime("%Y-%m-%d")
+            "max_tokens": request.max_tokens,
         }
         
         def do_it() -> Dict[str, Any]:
@@ -66,7 +64,7 @@ class CustomClient(CachingClient):
 class BaseClient:
     """Base client for provider-specific implementations."""
 
-    def __init__(self, thinking_budget: int = 256, timeout: int = 300):
+    def __init__(self, thinking_budget: int = 1024, timeout: int = 300):
         self.thinking_budget = thinking_budget
         self.timeout = timeout
     
@@ -101,47 +99,42 @@ class CustomOpenAIClient(BaseClient):
         self._validate_request(raw_request)
         start_time = time.time()
         
-        model = raw_request["model"]
-        n = raw_request.get("n", 1)
-        max_tokens = raw_request.get("max_tokens")
-
-        params: Dict[str, Any] = {
-            "model": model,
-            "input": raw_request["prompt"],
+        # Convert prompt to OpenAI messages format
+        messages = [{"role": "user", "content": raw_request["prompt"]}]
+        
+        params = {
+            "model": raw_request["model"],
+            "messages": messages,
+            "n": raw_request["n"],
         }
-
-        # Detect reasoning models
-        is_reasoning_model = any(
-            model.startswith(prefix)
-            for prefix in ("o1", "o3", "o4", "gpt-5")
-        )
         
-        if is_reasoning_model:
-            params["reasoning"] = {"effort": "low"}
+        # Handle temperature
+        if "temperature" in raw_request and raw_request["temperature"] is not None:
+            params["temperature"] = raw_request["temperature"]
         
-        if max_tokens:
-            if is_reasoning_model:
-                params["max_output_tokens"] = max_tokens + self.thinking_budget
-            else:
-                params["max_output_tokens"] = max_tokens
+        # Handle max_tokens vs max_completion_tokens for o4-mini
+        if any(raw_request["model"].startswith(prefix) for prefix in ("o3", "o4", "gpt-5")):
+            if "max_tokens" in raw_request and raw_request["max_tokens"]:
+                params["max_completion_tokens"] = raw_request["max_tokens"] + 1024
+            if "temperature" in params:
+                del params['temperature']
+        else:
+            if "max_tokens" in raw_request and raw_request["max_tokens"]:
+                params["max_tokens"] = raw_request["max_tokens"]
+        
+        # Add other optional parameters
+        if "top_p" in raw_request and raw_request["top_p"] is not None:
+            params["top_p"] = raw_request["top_p"]
 
         try:
-            # Call the Responses API
-            response = self.client.responses.create(**params)
-
-            # The SDK gives you the combined text directly
-            combined_text = (response.output_text or "").strip()
-
-            # Responses API returns only one "message", so duplicate for n
-            completions = [combined_text for _ in range(n)]
-
+            response = self.client.chat.completions.create(**params)
+            completions = [choice.message.content.strip() if choice.message.content else "" for choice in response.choices]
         except Exception as e:
             print(f"OpenAI error: {e}")
-            completions = [
-                "I cannot provide information or assist with requests"
-            ] * n
-
+            completions = ["I cannot provide information or assist with requests"] * raw_request["n"]
+        
         return self._format_response(completions, start_time)
+
 
 class CustomGeminiClient(BaseClient):
     def __init__(self, **kwargs):
@@ -156,11 +149,12 @@ class CustomGeminiClient(BaseClient):
         base_tokens = raw_request.get("max_tokens", 1024)
         temperature = raw_request.get("temperature", 0.0)
         
-        max_tokens = base_tokens + self.thinking_budget
+        max_tokens = base_tokens * 2 + self.thinking_budget + 128
         thinking_budget = self.thinking_budget
         
         config = types.GenerateContentConfig(
             thinking_config=types.ThinkingConfig(thinking_budget=thinking_budget),
+            temperature=temperature,
             maxOutputTokens=max_tokens
         )
         return config, model_name
@@ -169,6 +163,7 @@ class CustomGeminiClient(BaseClient):
         self._validate_request(raw_request)
         start_time = time.time()
         config, model_name = self._create_generation_config(raw_request)
+        
         try:
             completions = []
             for _ in range(raw_request["n"]):
@@ -184,6 +179,7 @@ class CustomGeminiClient(BaseClient):
             completions = ["I cannot provide information or assist with requests"] * raw_request["n"]
         
         return self._format_response(completions, start_time)
+
 
 class CustomXAIClient(BaseClient):
     def __init__(self, **kwargs):
@@ -235,12 +231,14 @@ class CustomMistralClient(BaseClient):
         }
         
         # Add optional parameters
+        if "temperature" in raw_request and raw_request["temperature"] is not None:
+            mistral_request["temperature"] = raw_request["temperature"]
         if "max_tokens" in raw_request and raw_request["max_tokens"]:
             mistral_request["max_tokens"] = raw_request["max_tokens"]
-        
+
         try:
             response = self.client.chat.complete(**mistral_request)
-            completions = [choice.message.content.replace("**", "").strip() if choice.message.content else "" 
+            completions = [choice.message.content.strip() if choice.message.content else "" 
                          for choice in response.choices]
         except Exception as e:
             print(f"Mistral error: {e}")
@@ -253,14 +251,14 @@ class CustomMistralClient(BaseClient):
 
 def generate_response(raw_request: Dict[str, Any]) -> Dict[str, Any]:
     provider = raw_request["provider"].lower()
-    
+
     clients = {
         "openai": CustomOpenAIClient,
         "gemini": CustomGeminiClient,
         "xai": CustomXAIClient,
         "mistral": CustomMistralClient,
     }
-        
+
     if provider not in clients:
         raise ValueError(f"Unsupported provider: {provider}. Supported providers: {list(clients.keys())}")
 
