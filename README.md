@@ -7,6 +7,7 @@ git clone https://github.com/mailong25/helm.git
 cd helm
 pip install -e .
 pip install -r requirements_extra.txt
+pip install openai==2.8.1
 ```
 
 ## 🔐 Export Your API Keys
