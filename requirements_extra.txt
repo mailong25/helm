@@ -8,6 +8,7 @@ anthropic==0.66.0
 xai_sdk==1.1.0
 mistralai==1.9.10
 google-genai==1.33.0
+openai==2.8.1
 rank-bm25==0.2.2
 https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl#sha256=86cc141f63942d4b2c5fcee06630fd6f904788d2f0ab005cce45aadb8fb73889
 boto3
